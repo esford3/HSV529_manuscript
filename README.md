@@ -18,5 +18,5 @@ Supplementary Figures:
 - Supplementary Figure 5. Gating strategy and CMP results to identify HSV-specificity of clonotypes 
 
 Prep Code: 
-Repertoire tracking
-Supp tables 4, 5 
+- Repertoire tracking
+- Supp tables 4, 5 (listed as 6)
