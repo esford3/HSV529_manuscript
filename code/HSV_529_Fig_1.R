@@ -10,7 +10,7 @@ rm(list=ls())
 # INPUTS
 user = 'esf'
 if(user == 'esf') {
-  repo_loc = '/Volumes/fh/fast/corey_l/esford3_kmayerbl_collab/software/HSV529_manuscript'
+  repo_loc = '/Volumes/corey_l/esford3_kmayerbl_collab/software/HSV529_manuscript'
 } else {
   stop("set repo loc and repo manually")
 }
@@ -43,11 +43,13 @@ graphable$t_plot = rep(c(1:11), 18)
 graph.cd4 = filter(graphable, cd == 4)
 graph.cd8 = filter(graphable, cd == 8)
 
-## CD4
-my_comparisons <- list(c(1, 3), c(1, 9), c(1, 10), c(1, 11), 
-                       c(3, 4), c(5, 6), c(7, 8),
-                       c(4, 9), c(6, 10), c(8, 11))
 
+my_comparisons_paired <- list(c(1, 3), c(1, 9), c(1, 10), 
+                              c(3, 4), c(5, 6), c(4, 9), c(6, 10))
+my_comparisons_unpaired <- list(c(1, 11), c(7, 8), c(8, 11))
+table(is.na(graph.cd4$cells), graph.cd4$day)
+
+## CD4
 plot <- graph.cd4 %>%
   select(t_plot, cells, id) %>%
   drop_na(cells) %>%
@@ -65,12 +67,17 @@ plot <- graph.cd4 %>%
   theme(axis.text=element_text(size=10, hjust = 0.5),
         axis.title=element_text(size=10, face="bold", hjust = 0.5),
         plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) + 
-  ggpubr::stat_compare_means(mapping = aes(group=t_plot), step.increase = .02, vjust = 1, 
-                            comparisons = my_comparisons, paired = FALSE, method = "wilcox", 
-                            size = 3, label = "p.signif", label.y.npc = 0, tip.length = 0, hide.ns = FALSE)
+  ggpubr::stat_compare_means(mapping = aes(group=t_plot), vjust = 0, label.y = c(340, 360, 380, 300, 300, 315, 330),
+                            comparisons = my_comparisons_paired, paired = TRUE, method = "wilcox", 
+                            size = 3, label = "p.signif", label.y.npc = 0, tip.length = 0, hide.ns = FALSE) + 
+  ggpubr::stat_compare_means(mapping = aes(group=t_plot), vjust = 0, label.y = c(400, 300, 345),
+                             comparisons = my_comparisons_unpaired, paired = FALSE, method = "wilcox", 
+                             size = 3, label = "p.signif", label.y.npc = 0, tip.length = 0, hide.ns = FALSE)
+
 pdf(figure_1b_filename, width = 6, height = 4)
 plot
 dev.off()
+## note that you have to tweak the alignment of the text a little bit for visibility  
 
 ## CD8 
 plot <- graph.cd8 %>%
@@ -87,12 +94,16 @@ plot <- graph.cd8 %>%
   scale_fill_manual(values=person_color, guide = guide_legend(title = 'Participant')) +
   ggtitle(CD8^{"+"}~T~cells) + labs(y=Cells~per~mm^{2}, x="Biopsy time points (day)") + 
   theme_bw() + 
-  theme(axis.text=element_text(size=12, hjust = 0.5),
-        axis.title=element_text(size=12, face="bold", hjust = 0.5),
+  theme(axis.text=element_text(size=10, hjust = 0.5),
+        axis.title=element_text(size=10, face="bold", hjust = 0.5),
         plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
-  ggpubr::stat_compare_means(mapping = aes(group=t_plot), step.increase = .02, vjust = 1, 
-                             comparisons = my_comparisons, paired = FALSE, method = "wilcox", 
+  ggpubr::stat_compare_means(mapping = aes(group=t_plot), vjust = 0, label.y = c(190, 205, 220, 130, 130, 150, 170),
+                             comparisons = my_comparisons_paired, paired = TRUE, method = "wilcox", 
+                             size = 3, label = "p.signif", label.y.npc = 0, tip.length = 0, hide.ns = FALSE) + 
+  ggpubr::stat_compare_means(mapping = aes(group=t_plot), vjust = 0, label.y = c(230, 130, 185),
+                             comparisons = my_comparisons_unpaired, paired = FALSE, method = "wilcox", 
                              size = 3, label = "p.signif", label.y.npc = 0, tip.length = 0, hide.ns = FALSE)
+
 pdf(figure_1c_filename, width = 6, height = 4)
 plot
 dev.off()
@@ -188,8 +199,8 @@ p <- ggplot(data = clonal, aes(x=time, y=n_unique, group = time)) +
   ggtitle("All unique TCR clonotypes") + 
   labs(y="Unique productive TCR sequences", x="Biopsy time points (day)") +
   theme_bw() + ylim(0,8400) + 
-  theme(axis.text=element_text(size=12, hjust = 0.5),
-        axis.title=element_text(size=12, face="bold", hjust = 0.5),
+  theme(axis.text=element_text(size=10, hjust = 0.5),
+        axis.title=element_text(size=10, face="bold", hjust = 0.5),
         plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
   ggpubr::stat_compare_means(mapping = aes(group=t_plot),  vjust = 0, 
                              comparisons = my_comparisons_paired, paired = TRUE, method = "wilcox.test", methods.args = "exact = TRUE",
@@ -225,8 +236,8 @@ p <- ggplot(data = clonal, aes(x=time, y=n_above4, group = time)) +
   ggtitle("TCR clonotypes detected at >4 copies") + 
   labs(y="Unique productive TCR sequences", x="Biopsy time points (day)") + 
   theme_bw() + 
-  theme(axis.text=element_text(size=12, hjust = 0.5),
-        axis.title=element_text(size=12, face="bold", hjust = 0.5),
+  theme(axis.text=element_text(size=10, hjust = 0.5),
+        axis.title=element_text(size=10, face="bold", hjust = 0.5),
         plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
   ggpubr::stat_compare_means(mapping = aes(group=t_plot),  vjust = 0, 
                              comparisons = my_comparisons_paired, paired = TRUE, method = "wilcox", label.y = c(690, 690, 690, 730, 780, 820),
@@ -261,8 +272,8 @@ p <- ggplot(data = clonal, aes(x=time, y=clonality, group = time)) +
   ggtitle("Repertoire clonality") + 
   labs(y="Clonality (1-normalized Shannon entropy)", x="Biopsy time points (day)") +
   theme_bw() + ylim(0,0.32) + 
-  theme(axis.text=element_text(size=12),
-        axis.title=element_text(size=12,face="bold"),
+  theme(axis.text=element_text(size=10),
+        axis.title=element_text(size=10,face="bold"),
         plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
   ggpubr::stat_compare_means(mapping = aes(group=t_plot),  vjust = 0, 
                              comparisons = my_comparisons_paired, paired = TRUE, method = "wilcox", label.y = c(.24, .24, .24, .265, .285, .3),
