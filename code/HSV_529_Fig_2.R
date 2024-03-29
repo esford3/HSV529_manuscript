@@ -81,15 +81,16 @@ map$a80[is.na(map$a80)] <- 0
 map$a90[is.na(map$a90)] <- 0
 map$prev <- ifelse(map$a0>0, "TRUE", "FALSE")
 table(is.na(map$a0))
-table(map$prev)
+table(map$prev, map$person)
 exp <- filter(map, (prev == TRUE & a10/a0 >=6) | (prev == FALSE & a10 >=6))
 label_color <-  c("1" = "#8d03a9", "2" = "#FFAD4A", "3" = "#0263be", 
                   "4" = "#FFE900", "5" = "#f93f61", "6" = "#6a4ee3", 
                   "7" = "#2e9a04", "8" = "#c8c89e", "9" = "#94ee78")
 
 ## FIGURE 2B
-prev_color <- c("TRUE" = "purple4", "FALSE" = "red")
-plot <- map %>% filter(g0 > 0) %>%
+prev_color <- c("FALSE" = "red", "TRUE" = "purple4")
+plot <- map %>% 
+  filter(g0 > 0) %>%
   select(person, a0, a10, a30, a40, a80, a90, prev) %>%
   mutate(uid = seq_along(.$person)) %>%
   tidyr::gather(time, count, -person, -uid, -prev) %>%
@@ -97,14 +98,14 @@ plot <- map %>% filter(g0 > 0) %>%
   mutate(person = factor(person)) %>%
   mutate(value = ifelse(count == 0, 0.1, count)) %>%
   ggplot(aes(x = xpos, y = value, group = uid, col = prev)) +
-  geom_line(size = .3) +
+  geom_line(size = .3, alpha = .5) +
   scale_y_log10(breaks = c(0.1, 1, 10, 100, 1000),
                 limits = c(0.1, 1000),
                 labels = c("ND", 1, 10, 100, 1000)) +
   scale_x_discrete(labels=c('0', '10', '30\n        Study day', '40', '180', '190'),
                    breaks=c("a0", "a10", "a30", "a40", "a80", "a90")) +
   theme_classic() +
-  facet_wrap(~prev+person, nrow = 2, labeller = label_parsed, drop = FALSE) + #if want wide version
+  facet_wrap(~factor(prev, levels = c("TRUE", "FALSE"))+person, nrow = 2, labeller = label_parsed, drop = FALSE) + #if want wide version
   annotation_logticks(side = "l" , size = .1) +
   scale_color_manual(values = prev_color) +
   theme(legend.position = "none") +
@@ -171,14 +172,14 @@ plot <- map %>% filter(g10 > 0) %>%
   mutate(person = factor(person)) %>%
   mutate(value = ifelse(count == 0, 0.1, count)) %>%
   ggplot(aes(x = xpos, y = value, group = uid, col = prev)) +
-  geom_line(size = .3) +
+  geom_line(size = .3, alpha = .5) +
   scale_y_log10(breaks = c(0.1, 1, 10, 100, 1000),
                 limits = c(0.1, 1000),
                 labels = c("ND", 1, 10, 100, 1000)) +
   scale_x_discrete(labels=c('0', '10', '30\n        Study day', '40', '180', '190'),
                    breaks=c("a0", "a10", "a30", "a40", "a80", "a90")) +
   theme_classic() +
-  facet_wrap(~prev+person, nrow = 2, labeller = label_parsed, drop = FALSE) + #if want wide version
+  facet_wrap(~factor(prev, levels = c("TRUE", "FALSE"))+person, nrow = 2, labeller = label_parsed, drop = FALSE) + #if want wide version
   annotation_logticks(side = "l" , size = .1) +
   scale_color_manual(values = prev_color) +
   theme(legend.position = "none") +
