@@ -13,12 +13,12 @@ rm(list=ls())
 # INPUTS
 user = 'esf'
 if(user == 'esf') {
-  repo_loc = '/Volumes/corey_l/esford3_kmayerbl_collab/software/HSV529_manuscript/'
+  repo_loc = '/Volumes/corey_l/esford3_kmayerbl_collab/software/HSV529_manuscript'
 } else {
   stop("set repo loc and repo manually")
 }
 
-filename_f3 = file.path(repo_loc, '/data/vax_nt_all_dei.csv') ## too big for github, available online
+filename_f3 = file.path(repo_loc, 'data/vax_nt_all_dei.csv') ## too big for github, available online
 
 ## OUTPUTS
 figure_3b_filename = file.path(repo_loc, 'figures/fig_3b1.pdf')
@@ -236,15 +236,13 @@ a <- ggplot(m_long, aes(x = xpos, y = value, fill = factor(person), group = pers
   scale_x_discrete(labels = c("dose1" = "Dose 1",
                               "dose2" = "Dose 2",
                               "dose3" = "Dose 3")) + 
-  labs(y="Unique clonotypes expanding >6", x= "") +
+  labs(y=expression("Unique clonotypes expanding">="6"), x= "") +
   theme(plot.title = element_text(size = 12, hjust = 0.5)) +
   theme_classic() + 
   scale_fill_manual(values = person_color, name = "Person", 
                     labels = c("1", "2", "3", "4", "5", "6", "7", "8", "9")) + 
-  ggpubr::stat_compare_means(comparisons = my_comparisons, paired = TRUE, na.rm = FALSE, 
-                             method = "wilcox", size = 4, label = "p.signif", label.y = c(550, 500, 590)) +
-  ggpubr::stat_compare_means(method = "wilcox", size = 4, label = "p.signif", 
-                             col = "black", hide.ns = TRUE)
+  ggpubr::stat_compare_means(comparisons = my_comparisons, paired = TRUE, na.rm = FALSE, col = "black", hide.ns = FALSE, 
+                             method = "wilcox", size = 4, label = "p.signif", tip.length = 0, label.y = c(550, 500, 590))
 
 pdf(figure_3d_filename, width = 3.5, height = 5)
 a 
@@ -270,16 +268,15 @@ a <- ggplot(m_long, aes(x = xpos, y = value, fill = factor(person), group = pers
   geom_bar(stat = "identity", show.legend = T, na.rm = T) +
   theme_bw() + ggtitle("Expanding clonotypes by dose and detection at day 0") +
   labs(x="Dose 1                Dose 2                Dose 3", 
-       y="Unique clonotypes expanding >6") +
+       y=expression("Unique clonotypes expanding">="6"), x= "") +
   theme(plot.title = element_text(size = 12, hjust = 0.5)) +
   scale_x_discrete(labels = c("Prevalent", "Elicited","Prevalent", "Elicited", "Prevalent", "Elicited"), 
                    guide = guide_axis(angle = 45)) + 
   theme_classic() + 
   scale_fill_manual(values = person_color, name = "Person", 
                     labels = c("1", "2", "3", "4", "5", "6", "7", "8", "9")) + 
-  ggpubr::stat_compare_means(comparisons = my_comparisons, paired = FALSE, na.rm = FALSE, 
-                             method = "wilcox", size = 4, label = "p.signif", label.y = c(275, 275, 275))+
-  ggpubr::stat_compare_means(method = "wilcox", size = 4, label = "p.signif", hide.ns = TRUE, col = "black")
+  ggpubr::stat_compare_means(comparisons = my_comparisons, paired = TRUE, na.rm = FALSE, tip.length = 0, 
+                             method = "wilcox", size = 4, label = "p.signif", label.y = c(275, 275, 275))
   
 pdf(figure_3e_filename, width = 5, height = 5)
 a 
